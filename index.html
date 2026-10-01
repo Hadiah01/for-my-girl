@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Untuk Kamu ❤️</title>
+  <!-- Google Fonts & SweetAlert2 -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://unpkg.com/typeit@8.7.0/dist/index.umd.js"></script>
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1000&auto=format&fit=crop') no-repeat center center/cover;
+      overflow: hidden;
+    }
+    /* Overlay Karpet Hitam Transparan */
+    .overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 1;
+    }
+    .container {
+      position: relative;
+      z-index: 10;
+      width: 90%;
+      max-width: 360px;
+      background: rgba(20, 20, 20, 0.75);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      text-align: center;
+      transition: all 0.5s ease;
+    }
+
+    /* Styles PIN Box */
+    .pin-display {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .pin-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      background: transparent;
+      transition: 0.2s;
+    }
+    .pin-dot.filled {
+      background: #4fc3f7;
+      border-color: #4fc3f7;
+    }
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 15px;
+    }
+    .key {
+      padding: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .key:active {
+      transform: scale(0.92);
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Styles Kartu Ucapan */
+    #suratCard {
+      display: none;
+      text-align: left;
+    }
+    .profile-header {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .profile-header img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      object-fit: cover;
+    }
+    .date-tag {
+      font-size: 12px;
+      opacity: 0.8;
+      text-align: center;
+      margin-bottom: 5px;
+    }
+    .text-content {
+      font-size: 13.5px;
+      line-height: 1.6;
+      max-height: 220px;
+      overflow-y: auto;
+      padding-right: 5px;
+      scroll-behavior: smooth;
+    }
+
+    /* Galeri Pilihan (My Girl) */
+    #photoGallery {
+      display: none;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .photo-item {
+      position: relative;
+      border-radius: 15px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .photo-item img {
+      width: 100%;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 15px;
+    }
+    .photo-title {
+      position: absolute;
+      bottom: 5px;
+      width: 100%;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="overlay"></div>
+
+  <!-- Audio Lagu My Girl Lokal -->
+  <audio id="bgMusic" src="mygirl.mp3" preload="auto" loop></audio>
+
+  <!-- KOTAK PIN -->
+  <div class="container" id="pinCard">
+    <h3 style="margin-bottom: 5px;">Tebak PIN-nya di Sini 😉</h3>
+    <p style="font-size: 12px; opacity: 0.8; margin-top: 0;">Masukkan 4 angka yang bener!</p>
+    
+    <div class="pin-display">
+      <div class="pin-dot" id="dot0"></div>
+      <div class="pin-dot" id="dot1"></div>
+      <div class="pin-dot" id="dot2"></div>
+      <div class="pin-dot" id="dot3"></div>
+    </div>
+
+    <div class="keypad">
+      <button class="key" onclick="pressKey('1')">1</button>
+      <button class="key" onclick="pressKey('2')">2</button>
+      <button class="key" onclick="pressKey('3')">3</button>
+      <button class="key" onclick="pressKey('4')">4</button>
+      <button class="key" onclick="pressKey('5')">5</button>
+      <button class="key" onclick="pressKey('6')">6</button>
+      <button class="key" onclick="pressKey('7')">7</button>
+      <button class="key" onclick="pressKey('8')">8</button>
+      <button class="key" onclick="pressKey('9')">9</button>
+      <button class="key" onclick="clearKey()">⌫</button>
+      <button class="key" onclick="pressKey('0')">0</button>
+      <button class="key" onclick="checkPin()">OK</button>
+    </div>
+  </div>
+
+  <!-- KOTAK SURAT / UCAPAN -->
+  <div class="container" id="suratCard">
+    <div class="profile-header">
+      <!-- Stiker / Profil Lucu -->
+      <img src="gambar1.gif" alt="Cute Sticker">
+      <div class="date-tag">Kamis, 01 Oktober 2026 💌</div>
+      <h3 style="margin: 5px 0;">Kamu Tau Ngga? 🤔</h3>
+    </div>
+
+    <div class="text-content" id="typingText"></div>
+
+    <!-- Pilihan Photo My Girl -->
+    <div id="photoGallery">
+      <!-- Kartu 1 -->
+      <div class="photo-item" onclick="showPhoto('mygirl2.jpg')">
+        <img src="mygirl2.jpg" alt="My Girl">
+        <div class="photo-title">My Girl 💕</div>
+      </div>
+
+      <!-- Kartu 2 -->
+      <div class="photo-item" onclick="showPhoto('mygirl.jpg')">
+        <img src="mygirl.jpg" alt="My Girl">
+        <div class="photo-title">My Girl 💖</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const correctPin = "2709"; // PIN: 2709
+    let currentInput = "";
+    const music = document.getElementById("bgMusic");
+
+    function updateDots() {
+      for (let i = 0; i < 4; i++) {
+        const dot = document.getElementById(`dot${i}`);
+        if (i < currentInput.length) {
+          dot.classList.add("filled");
+        } else {
+          dot.classList.remove("filled");
+        }
+      }
+    }
+
+    function pressKey(num) {
+      if (currentInput.length < 4) {
+        currentInput += num;
+        updateDots();
+        if (currentInput.length === 4) {
+          checkPin();
+        }
+      }
+    }
+
+    function clearKey() {
+      currentInput = currentInput.slice(0, -1);
+      updateDots();
+    }
+
+    function checkPin() {
+      if (currentInput === correctPin) {
+        // PIN Benar
+        document.getElementById("pinCard").style.display = "none";
+        document.getElementById("suratCard").style.display = "block";
+        music.play().catch(e => console.log("Audio play error: ", e));
+        startTyping();
+      } else {
+        // PIN Salah
+        Swal.fire({
+          icon: 'error',
+          title: 'PIN-nya salah yaw! 🫢',
+          text: 'Clue: 2709',
+          confirmButtonColor: '#4fc3f7'
+        });
+        currentInput = "";
+        updateDots();
+      }
+    }
+
+    function startTyping() {
+      const containerText = document.getElementById("typingText");
+
+      new TypeIt("#typingText", {
+        speed: 85,
+        lifeLike: true,
+        waitUntilVisible: true,
+        // Fungsi ini otomatis berjalan setiap kali ada huruf baru diketik
+        afterStep: function () {
+          containerText.scrollTop = containerText.scrollHeight;
+        },
+        afterComplete: function () {
+          setTimeout(() => {
+            document.getElementById("photoGallery").style.display = "grid";
+            // Scroll ke paling bawah agar tombol photo gallery kelihatan penuh
+            containerText.scrollTop = containerText.scrollHeight;
+          }, 800);
+        }
+      })
+      .pause(2000)
+      .type("Ini adalah hari yang spesial buat kamu... 🌸<br><br>")
+      .pause(2800)
+      .type("<b>Happy National Girlfriend Day Sayanggg 🎉</b><br><br>")
+      .pause(3000)
+      .type("Aku udah tunggu momen ini dari lama lohh...<br><br>")
+      .pause(2200)
+      .type("Meskipun mungkin aku belum bisa ngasih semua yang kamu inginkan... ")
+      .pause(1200)
+      .type("tapi aku harap kata-kata ini bisa bikin kamu senyum sedikit yaa 🤗<br><br>")
+      .pause(3500)
+      .type("Makasih ya sayang udah hadir dan selalu nemenin aku sampai sekarang.<br>")
+      .pause(2200)
+      .type("Makasih juga udah sabar sama semua kurangnya aku... 🥹<br><br>")
+      .pause(3000)
+      .type("<b>And... I LOVE YOU so muchh ❤️</b><br>")
+      .pause(1800)
+      .type("<i>More than words could ever explain... ✨</i>")
+      .go();
+    }
+
+    function showPhoto(imgUrl) {
+      Swal.fire({
+        imageUrl: imgUrl,
+        imageAlt: 'My Girl',
+        title: 'Cantiknya Akuu 🥰',
+        confirmButtonColor: '#4fc3f7'
+      });
+    }
+  </script>
+</body>
+</html>
